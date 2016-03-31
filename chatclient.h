@@ -21,6 +21,7 @@ public slots:
 signals:
     void connectionStateChanged(bool connected);
     void messageReceived(QString message);
+    void userReceived(QStringList userList);
 
 private:
     QString m_userName;

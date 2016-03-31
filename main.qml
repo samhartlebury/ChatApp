@@ -11,14 +11,33 @@ ApplicationWindow {
 
     ChatClient {
         id: client
+
         onConnectionStateChanged: {
-            loginPage.visible = false;
-            chatPage.visible = true;
+            if (connected) {
+                loginPage.visible = false;
+                chatPage.visible = true;
+            } else {
+                console.log("connection error...");
+            }
         }
 
         onMessageReceived: {
             messageModel.append({"message": message});
             messageList.incrementCurrentIndex();
+        }
+
+        onUserReceived: {
+            userModel.clear();
+            for (var i in userList)
+                userModel.append({"user": userList[i]});
+        }
+    }
+
+    ListModel {
+        id: userModel
+
+        ListElement {
+            user: ""
         }
     }
 
@@ -74,12 +93,13 @@ ApplicationWindow {
             }
         }
 
-
         ListView {
             id: messageList
+
             anchors.top: parent.top
-            anchors.topMargin: messageRect.height
-            width: parent.width
+            anchors.left: parent.left
+            anchors.topMargin: sendMessage.height
+            width: parent.width / 2
             height: messageModel.count * messageText.height
             model: messageModel
             verticalLayoutDirection: ListView.BottomToTop
@@ -88,6 +108,24 @@ ApplicationWindow {
                 text: message
             }
         }
+
+        ListView {
+            id: users
+
+            anchors.top: parent.top
+            anchors.right: parent.right
+            anchors.topMargin: sendMessage.height
+            width: parent.width / 2
+            height: userModel.count * messageText.height
+            model: userModel
+            verticalLayoutDirection: ListView.BottomToTop
+            layoutDirection: Qt.RightToLeft
+            clip: true
+            delegate: Label {
+                text: user
+            }
+        }
+
     }
 
     Rectangle {

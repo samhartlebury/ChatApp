@@ -10,7 +10,9 @@ ChatClient::ChatClient(QObject *parent) : QObject(parent)
 void ChatClient::login(const QString &userName)
 {
    m_userName = userName;
-   socket->connectToHost("192.168.1.5", 9999);
+   //socket->connectToHost("79.77.83.96", 9999); // for internet
+   socket->connectToHost("192.168.1.5", 9999); // for local
+
 }
 
 void ChatClient::say(const QString &message)
@@ -38,14 +40,14 @@ void ChatClient::readyRead()
 
         // Is this a users message:
         if(usersRegex.indexIn(line) != -1) {
-            // If so, udpate our users list on the right:
-            QStringList users = usersRegex.cap(1).split(",");
+            // If so, udpate our users list
+            QStringList userList = usersRegex.cap(1).split(',');
+            emit userReceived(userList);
 
-           // foreach(QString user, users)
-                //new QListWidgetItem(QPixmap(":/user.png"), user, userListWidget);
+
         } else if(messageRegex.indexIn(line) != -1) { // Is this a normal chat message:
 
-            // If so, append this message to our chat box:
+            // If so, append this message
             QString user = messageRegex.cap(1);
             QString message = messageRegex.cap(2);
 
